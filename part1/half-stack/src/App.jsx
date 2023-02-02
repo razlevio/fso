@@ -3,7 +3,7 @@ function Header({course}) {
 }
 
 function Part({part, exercises}) {
-  return <p>{part} {exercises}</p>
+  return <p>{part} ~ {exercises}</p>
 }
 
 function Content({parts}) {
@@ -20,7 +20,7 @@ function Total({parts}) {
 
 function App() {
   const course = {
-    name: 'Half Stack application development',
+    name: 'Half Stack',
     parts: [
       {
         name: 'Fundamentals of React',
@@ -38,7 +38,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="flex justify-center items-center flex-col p-5 gap-10">
       <Header course={course.name} />
       <Content parts={course.parts} />
       <Total parts={course.parts} />
