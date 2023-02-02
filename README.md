@@ -1,2 +1,0 @@
-# fso
-full stack open
