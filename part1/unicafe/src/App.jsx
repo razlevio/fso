@@ -57,21 +57,33 @@ function Statistic({ text, value }) {
 }
 
 function Statistics({ stats }) {
-  return (
-    <table>
-      <tbody>
-        <Statistic text="Good" value={stats.good} />
-        <Statistic text="Neutral" value={stats.neutral} />
-        <Statistic text="Bad" value={stats.bad} />
-      </tbody>
-    </table>
-  );
+  if (!stats) return <p>No feedback given</p>
+  else {
+    return (
+      <table>
+        <tbody>
+          <Statistic text="Good" value={stats.good} />
+          <Statistic text="Neutral" value={stats.neutral} />
+          <Statistic text="Bad" value={stats.bad} />
+          <Statistic text="All" value={stats.total} />
+          <Statistic text="Average" value={stats.avg ? stats.avg : "-"} />
+          <Statistic text="Positive" value={stats.positivePer ? `${stats.positivePer}%` : "-"} />
+        </tbody>
+      </table>
+    );
+  }
 }
 
 function App() {
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
+
+  let totalFeedback = good + neutral + bad;
+  let avgScore = _.ceil(((good-bad) / totalFeedback), 2);
+  let positivePercentage = _.ceil(((good / totalFeedback) * 100), 2);
+
+  let anyFeedback = (good > 0 || neutral > 0 || bad > 0) ? true : false;
 
   function onGood() {
     setGood(good + 1);
@@ -90,7 +102,7 @@ function App() {
       <Title text="Give Feedback" />
       <Feedback handlers={{good: onGood, neutral: onNeutral, bad: onBad}}/>
       <Title text="Statistics" />
-      <Statistics stats={{ good: good, neutral: neutral, bad: bad }} />
+      <Statistics stats={anyFeedback ? { good: good, neutral: neutral, bad: bad, total: totalFeedback, avg: avgScore, positivePer: positivePercentage} : false} />
     </div>
   );
 }
