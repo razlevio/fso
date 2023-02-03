@@ -21,16 +21,46 @@ function App() {
     setSelected({text: anecdotes[rand], index: rand});
   };
 
-  function updatePoints(e) {
+  function updatePoints() {
     setPoints({...points, [selected.index]: points[selected.index] + 1})
   };
 
+  function allPointsZero() {
+    let values = Object.values(points);
+    let sum = values.reduce((acc, term) => acc + term, 0);
+    if (sum === 0) return true;
+    else return false;
+  };
+
+  function mostVotesAnecdoteIndex() {
+    let maxValue = 0;
+    let maxIndex = 0;
+    const keys = Object.keys(points);
+    keys.forEach(key => {
+      if(points[key] > maxValue) {
+        maxValue = points[key];
+        maxIndex = key;
+      }
+    });
+    return maxIndex;
+  };
+
   return (
-    <div className="flex flex-col gap-2 justify-center items-center">
-      <h1 className="text-4xl p-5 text-center">{selected.text}</h1>
-      <h3 className="text-xl p-5 text-center">{points[selected.index] > 0 ? `VOTES: ${points[selected.index]}` : `No Votes Yet`}</h3>
-      <button onClick={fetchAnecdote} className="text-pink-400 border border-pink-400 hover:bg-pink-400 hover:text-white active:bg-pink-600 font-bold uppercase px-8 py-2 w-54 rounded outline-none focus:outline-none ease-linear transition-all duration-150">Generate Anecdote</button>
-      <button onClick={updatePoints} className="text-sky-400 border border-sky-400 hover:bg-sky-400 hover:text-white active:bg-sky-600 font-bold uppercase px-8 py-2 w-60 rounded outline-none focus:outline-none ease-linear transition-all duration-150">Vote</button>
+    <div className="flex flex-col gap-20 justify-center items-center">
+      <div className="flex flex-col gap-8">
+        <h1 className="text-5xl text-center max-w-4xl font-bold">ANECDOTE OF THE DAY</h1>
+        <h1 className="text-4xl text-center max-w-4xl">{selected.text}</h1>
+        <h3 className="text-xl text-center">{points[selected.index] > 0 ? `VOTES: ${points[selected.index]}` : `No Votes Yet`}</h3>
+        <div className="flex justify-center items-center gap-3">
+          <button onClick={fetchAnecdote} className="text-pink-400 border border-pink-400 hover:bg-pink-400 hover:text-white active:bg-pink-600 font-bold uppercase px-8 py-2 w-54 rounded outline-none focus:outline-none ease-linear transition-all duration-150">Generate Anecdote</button>
+          <button onClick={updatePoints} className="text-sky-400 border border-sky-400 hover:bg-sky-400 hover:text-white active:bg-sky-600 font-bold uppercase px-8 py-2 w-60 rounded outline-none focus:outline-none ease-linear transition-all duration-150">Vote</button>
+        </div>
+      </div>
+      <div>
+        <h1 className="text-5xl p-5 text-center max-w-4xl font-bold">ANECDOTE WITH MOST VOTES</h1>
+        <h1 className="text-4xl p-5 text-center max-w-4xl">{allPointsZero() ? `No Votes For Any Anecdote Yet` : anecdotes[mostVotesAnecdoteIndex()]}</h1>
+        <h3 className="text-xl text-center">{allPointsZero() ? `` : `VOTES: ${points[mostVotesAnecdoteIndex()]}`}</h3>
+      </div>
     </div>
   );
 }
