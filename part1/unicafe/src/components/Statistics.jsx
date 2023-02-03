@@ -2,11 +2,13 @@ import Title from "./Title";
 
 function Statistics({stats}) {
     return (
-        <div>
+        <div className="flex flex-col gap-5">
             <Title text="Statistics" />
-            <p>Good: {stats.good}</p>
-            <p>Neutral: {stats.neutral}</p>
-            <p>Bad: {stats.bad}</p>
+            <div>
+                <p>Good: {stats.good}</p>
+                <p>Neutral: {stats.neutral}</p>
+                <p>Bad: {stats.bad}</p>
+            </div>
         </div>    
     )
 };
