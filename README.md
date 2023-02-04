@@ -1,2 +1,2 @@
 # FSO
-full stack open projects
+Full Stack Open Projects
