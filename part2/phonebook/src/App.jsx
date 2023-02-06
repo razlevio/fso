@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Title from "./components/Title";
 import SearchForm from "./components/SearchForm";
 import AddPersonForm from "./components/AddPersonForm";
 import Phonebook from "./components/Phonebook";
+import { getAll, create, update } from "./services/phonebook";
 
 function App() {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas", tel: "0506460330" }]);
+  const [persons, setPersons] = useState([]);
   const [filteredPersons, setFilteredPersons] = useState([...persons]);
   const [states, setStates] = useState({newName: "", newTel: ""});
   const [filter, setFilter] = useState("");
+
+  useEffect(() => {
+    getAll().then(res => setPersons(res))
+  }, []);
 
   function uniqueName(name) {
     let lowerName = name.toLowerCase();
@@ -33,6 +39,8 @@ function App() {
     if (states.newName !== "" && states.newTel !== "") {
       if(uniqueName(states.newName) && uniqueTel(states.newName) && telCorrectFormat(states.newTel)) {
         setPersons([...persons, { name: states.newName, tel: states.newTel}]);
+        create({name: states.newName, number: states.newTel})
+          .then(res => console.log(res))
         setStates({newName: "", newTel: ""});
       } else setStates({newName: "", newTel: ""});
     } else setStates({newName: "", newTel: ""});
