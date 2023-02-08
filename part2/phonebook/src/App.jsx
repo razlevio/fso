@@ -4,7 +4,7 @@ import Title from "./components/Title";
 import SearchForm from "./components/SearchForm";
 import AddPersonForm from "./components/AddPersonForm";
 import Phonebook from "./components/Phonebook";
-import { getAll, create, update } from "./services/phonebook";
+import { getAll, create, update, del } from "./services/phonebook";
 
 function App() {
   const [persons, setPersons] = useState([]);
@@ -33,17 +33,39 @@ function App() {
     return (/^\d+$/.test(tel))
   }
 
+  function updateNumber(name, tel) {
+    let person = persons.find(person => person.name === name);
+    let newObj = {...person, tel: tel};
+    let conf = window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`);
+    if(conf) {
+      update(person.id, newObj)
+      .then(res => {
+        let clone = [...persons];
+        clone[clone.indexOf(person)] = res;
+        setPersons(clone);
+      });
+    }
+  };
+
   function addPerson(e) {
     e.preventDefault();
 
     if (states.newName !== "" && states.newTel !== "") {
-      if(uniqueName(states.newName) && uniqueTel(states.newName) && telCorrectFormat(states.newTel)) {
+      if(uniqueName(states.newName) && uniqueTel(states.newTel) && telCorrectFormat(states.newTel)) {
         setPersons([...persons, { name: states.newName, tel: states.newTel}]);
-        create({name: states.newName, number: states.newTel})
+        create({name: states.newName, tel: states.newTel})
           .then(res => console.log(res))
         setStates({newName: "", newTel: ""});
+      } else if(!uniqueName(states.newName) && uniqueTel(states.newTel)) {
+        updateNumber(states.newName, states.newTel);
       } else setStates({newName: "", newTel: ""});
     } else setStates({newName: "", newTel: ""});
+  }
+
+  function removePerson(e, id) {
+    const clone = [...persons].filter(person => person.id !== id);
+    del(id).then(res => console.log(res ? res : "Person not found"));
+    setPersons(clone);
   }
 
   function filtering(e) {
@@ -62,7 +84,7 @@ function App() {
       <SearchForm currentFilter={filter} handleChange={filtering} />
       <AddPersonForm handleSubmit={addPerson} states={states} handleChange={handleInputChange} />
       <Title title="numbers" />
-      <Phonebook filter={filter} filteredPersons={filteredPersons} persons={persons} />
+      <Phonebook filter={filter} filteredPersons={filteredPersons} persons={persons} handleRemove={removePerson} />
     </div>
   );
 }
