@@ -1,21 +1,25 @@
 import { useState, useEffect } from 'react'
 import { getCountriesWithString, getAllCountries } from './services/services';
+import { ErrorBoundary } from 'react-error-boundary';
+
 import Header from "./components/Header";
 import Form from "./components/Form";
 import Error from "./components/Error";
 import Country from "./components/Country";
 import Countries from "./components/Countries";
+
 import { lowerCase } from 'lodash';
 
 function App() {
 
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState(null);
     const [countries, setCountries] = useState([]);
     const [filteredCountries, setFilteredCountries] = useState([]);
-    const [error, setError] = useState("");
+    const [status, setStatus] = useState("idle");
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-      getAllCountries().then(res => setCountries(res))
+      getAllCountries().then(data => setFilteredCountries(data))
     }, [])
     
     function handleSearchInputChange(e) {
