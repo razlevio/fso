@@ -46,6 +46,15 @@ server.get("/api/persons/:id", (req, res) => {
     else res.json(data);
 });
 
+server.post("/api/persons", (req, res) => {
+    const newId = Math.floor(Math.random() * 10000000000);
+    const { name, number } = req.body;
+    if(!name || !number) return res.status(400).json({error: "name or number missing"});
+    if(phonebook.find(pers => pers.name.toLowerCase() === name.toLowerCase())) return res.status(400).json({error: "name must be unique"});
+    phonebook.push({id: newId, name: name, number: number});
+    res.send(`Added ${name} with number ${number} to phonebook`);
+});
+
 server.delete("/api/persons/del/:id", (req, res) => {
     const id = Number(req.params.id);
     phonebook = phonebook.filter(pers => pers.id !== id);
