@@ -1,7 +1,21 @@
-import express from "express"
+import express from "express";
+import morgan from "morgan";
 
 const server = express();
 server.use(express.json());
+
+
+server.use(morgan(function (tokens, req, res) {
+    return [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'), '-',
+    tokens['response-time'](req, res), 'ms',
+    req.method === "POST" ? JSON.stringify(req.body) : ""
+    ].join(' ')
+  }));
+
 const port = process.env.PORT || 5001;
 
 let phonebook = [
